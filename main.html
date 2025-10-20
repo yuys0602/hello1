@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI辅助研发开发技术分享</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Microsoft YaHei', 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .presentation-container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        
+        .slide {
+            display: none;
+            min-height: 600px;
+            padding: 60px;
+            animation: slideIn 0.5s ease-in-out;
+        }
+        
+        .slide.active {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .slide-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        h1 {
+            font-size: 48px;
+            color: #333;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+        
+        h2 {
+            font-size: 36px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        h3 {
+            font-size: 24px;
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        p, li {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        ul {
+            margin-left: 30px;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .nav-btn {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.3s;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .slide-indicator {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stat-label {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .tool-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .tool-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .tool-desc {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .code-example {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .prompt-box {
+            background: #e8f4fd;
+            border-left: 4px solid #2196F3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .prompt-title {
+            font-weight: bold;
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 30px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #667eea;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            background: #667eea;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px #667eea;
+        }
+        
+        .timeline-year {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Slide 1: 标题页 -->
+        <div class="slide active">
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 500px;">
+                <h1 style="font-size: 56px; margin-bottom: 40px;">AI辅助研发开发技术分享</h1>
+                <p style="font-size: 24px; color: #666; text-align: center;">大模型时代的研发效能提升</p>
+                <div style="margin-top: 60px; text-align: center;">
+                    <p style="font-size: 20px; color: #888;">汇报人：技术总师</p>
+                    <p style="font-size: 18px; color: #999;">2025年1月</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: 目录 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>汇报内容</h2>
+            </div>
+            <div style="padding: 40px;">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-year">01</div>
+                        <p style="font-size: 22px;">AI辅助开发技术发展现状</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">02</div>
+                        <p style="font-size: 22px;">主流AI编程工具介绍</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">03</div>
+                        <p style="font-size: 22px;">完整案例：钢板生产监控平台开发</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">04</div>
+                        <p style="font-size: 22px;">效率提升数据分析</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-year">05</div>
+                        <p style="font-size: 22px;">总结与展望</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: 技术发展现状 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>一、AI辅助开发技术发展现状</h2>
+            </div>
+            <h3>技术演进三阶段</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">2021-2022 代码补全时代</div>
+                    <p>GitHub Copilot发布，代码生成准确率37%，开启AI编程时代</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2023-2024 智能辅助时代</div>
+                    <p>多模型协同，准确率提升至50-60%，项目级上下文理解</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">2024-2025 智能体时代</div>
+                    <p>自主编程能力，准确率达70%+，可连续工作7小时</p>
+                </div>
+            </div>
+            
+            <h3>关键能力提升</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">70%+</div>
+                    <div class="stat-label">代码生成准确率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">41%</div>
+                    <div class="stat-label">全球AI生成代码占比</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">支持编程语言</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2560亿</div>
+                    <div class="stat-label">2024年生成代码行数</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: 主流工具介绍 - 国外 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>二、主流AI编程工具 - 国外</h2>
+            </div>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-name">GitHub Copilot</div>
+                    <div class="tool-desc">
+                        • 市场份额最大，100万+活跃用户<br>
+                        • 支持多模型（GPT-4、Claude等）<br>
+                        • 代码采纳率：27-30%<br>
+                        • 企业版：$19-39/月
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-name">Cursor</div>
+                    <div class="tool-desc">
+                        • 项目级上下文理解<br>
+                        • 多文件同时编辑<br>
+                        • 估值26亿美元（2024年）<br>
+                        • 定价：$20-40/月
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-name">Claude (Anthropic)</div>
+                    <div class="tool-desc">
+                        • SWE-bench得分72.5%<br>
+                        • Artifacts交互式开发<br>
+                        • 上下文窗口200K tokens<br>
+                        • 强大的代码理解能力
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-name">Devin (Cognition)</div>
+                    <div class="tool-desc">
+                        • AI软件工程师定位<br>
+                        • 可独立完成完整任务<br>
+                        • 解决13.86% GitHub issues<br>
+                        • 定价：$500/月（团队版）
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-name">Windsurf</div>
+                    <div class="tool-desc">
+                        • Codeium推出的AI IDE<br>
+                        • 深度集成开发环境<br>
+                        • 实时协作编程<br>
+                        • 免费版本可用
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-name">Replit</div>
+                    <div class="tool-desc">
+                        • 在线开发环境<br>
+                        • AI辅助全栈开发<br>
+                        • 一键部署功能<br>
+                        • 适合快速原型开发
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: 主流工具介绍 - 国内 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>二、主流AI编程工具 - 国内</h2>
+            </div>
+            <div class="tool-grid">
+                <div class="tool-card">
+                    <div class="tool-name">通义灵码（阿里）</div>
+                    <div class="tool-desc">
+                        • 基于通义千问大模型<br>
+                        • 内部采纳率52%<br>
+                        • 支持私有化部署<br>
+                        • 企业级安全保障
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-name">文心快码（百度）</div>
+                    <div class="tool-desc">
+                        • 基于文心大模型<br>
+                        • 深度集成百度生态<br>
+                        • 代码解释与重构<br>
+                        • 支持多IDE插件
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-name">MarsCode（字节跳动）</div>
+                    <div class="tool-desc">
+                        • 基于豆包大模型<br>
+                        • 免费向开发者开放<br>
+                        • 项目问答能力强<br>
+                        • Bug自动修复
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-name">Trae（字节跳动海外）</div>
+                    <div class="tool-desc">
+                        • 多模型支持（GPT-4o等）<br>
+                        • Agent编程模式<br>
+                        • 从Copilot到Autopilot<br>
+                        • 面向全球市场
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-name">iFlyCode（科大讯飞）</div>
+                    <div class="tool-desc">
+                        • 基于星火大模型<br>
+                        • 单测覆盖率提升至50%<br>
+                        • SaaS+私有化部署<br>
+                        • 内部采纳率52%
+                    </div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-name">CodeBuddy（腾讯）</div>
+                    <div class="tool-desc">
+                        • 编码效率提升40%<br>
+                        • 复杂任务完成率高<br>
+                        • 100%国内模型支持<br>
+                        • 企业级应用
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: 案例介绍 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>三、完整案例：钢板生产监控平台</h2>
+            </div>
+            <h3>项目背景</h3>
+            <p>• <strong>目标：</strong>建设数字化钢板生产监控平台，实时监管流水线生产效率</p>
+            <p>• <strong>监控时段：</strong>工作日8:30-17:30</p>
+            <p>• <strong>监控环节：</strong>原料上料、参数调试、加热处理、轧制成型、冷却处理、质量检测、包装入库、设备维护（8个关键步骤）</p>
+            
+            <h3>系统架构</h3>
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <p><strong>前端：</strong>React + TypeScript + Ant Design</p>
+                <p><strong>后端：</strong>Node.js + Express + PostgreSQL</p>
+                <p><strong>监控：</strong>WebSocket实时数据推送</p>
+                <p><strong>分析：</strong>Python数据分析服务</p>
+            </div>
+            
+            <h3>功能模块</h3>
+            <ul>
+                <li>实时生产监控大屏</li>
+                <li>生产效率统计分析</li>
+                <li>设备状态监控</li>
+                <li>质量趋势分析</li>
+                <li>智能预警与建议</li>
+            </ul>
+        </div>
+
+        <!-- Slide 7: 产品原型设计 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>开发流程 1：产品原型设计</h2>
+            </div>
+            
+            <div class="prompt-box">
+                <div class="prompt-title">AI提示词示例</div>
+                <p>"设计一个钢板生产监控系统的产品原型，包含以下功能：<br>
+                1. 实时监控大屏，展示8条流水线的运行状态<br>
+                2. 生产效率分析页面，包含日/周/月趋势图表<br>
+                3. 设备健康度监控，预警维护需求<br>
+                4. 数据需要包含：产量、合格率、设备利用率、OEE等关键指标<br>
+                请生成详细的页面布局和交互流程说明"</p>
+            </div>
+
+            <h3>AI生成的原型设计要点</h3>
+            <div class="code-example">
+<pre>// 页面结构设计
+const MonitoringSystem = {
+  pages: [
+    {
+      name: "实时监控大屏",
+      layout: "Grid 2x4",
+      components: [
+        "生产线状态卡片",
+        "实时产量统计",
+        "设备运行状态",
+        "质量指标监控"
+      ]
+    },
+    {
+      name: "效率分析",
+      charts: [
+        "产量趋势图",
+        "OEE分析图",
+        "工序时长分析",
+        "班次对比"
+      ]
+    },
+    {
+      name: "智能建议",
+      features: [
+        "瓶颈工序识别",
+        "维护计划推荐",
+        "产能优化建议"
+      ]
+    }
+  ]
+}</pre>
+            </div>
+        </div>
+
+        <!-- Slide 8: 前端开发 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>开发流程 2：前端页面开发</h2>
+            </div>
+            
+            <div class="prompt-box">
+                <div class="prompt-title">AI提示词示例</div>
+                <p>"使用React和TypeScript创建钢板生产监控大屏组件，要求：<br>
+                1. 实时显示8条生产线的状态（运行/停机/维护）<br>
+                2. 使用WebSocket接收实时数据<br>
+                3. 使用ECharts展示产量趋势图<br>
+                4. 响应式设计，支持大屏展示"</p>
+            </div>
+
+            <h3>AI生成的前端代码示例</h3>
+            <div class="code-example">
+<pre>import React, { useEffect, useState } from 'react';
+import { Card, Row, Col, Statistic } from 'antd';
+import * as echarts from 'echarts';
+
+const ProductionMonitor: React.FC = () => {
+  const [productionData, setProductionData] = useState&lt;any[]&gt;([]);
+  const [wsConnection, setWsConnection] = useState&lt;WebSocket | null&gt;(null);
+
+  useEffect(() => {
+    // WebSocket连接
+    const ws = new WebSocket('ws://localhost:3001/production');
+    
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      setProductionData(prev => [...prev.slice(-99), data]);
+    };
+
+    setWsConnection(ws);
+    return () => ws.close();
+  }, []);
+
+  return (
+    &lt;div className="production-monitor"&gt;
+      &lt;Row gutter={[16, 16]}&gt;
+        {[1,2,3,4,5,6,7,8].map(lineNo => (
+          &lt;Col span={6} key={lineNo}&gt;
+            &lt;Card title={`生产线 ${lineNo}`}&gt;
+              &lt;Statistic 
+                title="今日产量" 
+                value={productionData[lineNo]?.output || 0}
+                suffix="吨"
+              /&gt;
+              &lt;Statistic 
+                title="合格率" 
+                value={productionData[lineNo]?.quality || 0}
+                suffix="%"
+              /&gt;
+            &lt;/Card&gt;
+          &lt;/Col&gt;
+        ))}
+      &lt;/Row&gt;
+    &lt;/div&gt;
+  );
+};</pre>
+            </div>
+        </div>
+
+        <!-- Slide 9: 后端开发 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>开发流程 3：后端接口开发</h2>
+            </div>
+            
+            <div class="prompt-box">
+                <div class="prompt-title">AI提示词示例</div>
+                <p>"创建Node.js后端API，实现：<br>
+                1. RESTful接口：获取生产数据、设备状态、质量报告<br>
+                2. WebSocket服务：推送实时生产数据<br>
+                3. 数据库设计：生产记录表、设备状态表、质量检测表<br>
+                4. 包含数据验证和错误处理"</p>
+            </div>
+
+            <h3>AI生成的后端代码示例</h3>
+            <div class="code-example">
+<pre>const express = require('express');
+const WebSocket = require('ws');
+const { Pool } = require('pg');
+
+const app = express();
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
+});
+
+// RESTful API - 获取生产数据
+app.get('/api/production/:lineId', async (req, res) => {
+  try {
+    const { lineId } = req.params;
+    const { startDate, endDate } = req.query;
+    
+    const query = `
+      SELECT 
+        line_id,
+        DATE_TRUNC('hour', timestamp) as hour,
+        SUM(output) as total_output,
+        AVG(quality_rate) as avg_quality,
+        AVG(oee) as avg_oee
+      FROM production_records
+      WHERE line_id = $1 
+        AND timestamp BETWEEN $2 AND $3
+      GROUP BY line_id, hour
+      ORDER BY hour DESC
+    `;
+    
+    const result = await pool.query(query, [lineId, startDate, endDate]);
+    res.json({
+      success: true,
+      data: result.rows
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+});
+
+// WebSocket服务
+const wss = new WebSocket.Server({ port: 3001 });
+
+wss.on('connection', (ws) => {
+  const interval = setInterval(async () => {
+    const data = await getRealtimeData();
+    ws.send(JSON.stringify(data));
+  }, 5000);
+
+  ws.on('close', () => clearInterval(interval));
+});</pre>
+            </div>
+        </div>
+
+        <!-- Slide 10: 算法接口开发 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>开发流程 4：算法能力接口</h2>
+            </div>
+            
+            <div class="prompt-box">
+                <div class="prompt-title">AI提示词示例</div>
+                <p>"使用Python开发生产效率分析算法：<br>
+                1. OEE（设备综合效率）计算：可用率×性能率×质量率<br>
+                2. 异常检测：识别生产效率异常波动<br>
+                3. 预测分析：基于历史数据预测未来24小时产量<br>
+                4. 瓶颈识别：找出影响整体效率的关键工序"</p>
+            </div>
+
+            <h3>AI生成的算法代码示例</h3>
+            <div class="code-example">
+<pre>import pandas as pd
+import numpy as np
+from scipy import stats
+from sklearn.ensemble import RandomForestRegressor
+
+class ProductionAnalyzer:
+    def calculate_oee(self, production_data):
+        """计算OEE（设备综合效率）"""
+        availability = production_data['run_time'] / production_data['planned_time']
+        performance = production_data['actual_output'] / production_data['theoretical_output']
+        quality = production_data['good_products'] / production_data['total_products']
+        
+        oee = availability * performance * quality
+        return {
+            'oee': round(oee * 100, 2),
+            'availability': round(availability * 100, 2),
+            'performance': round(performance * 100, 2),
+            'quality': round(quality * 100, 2)
+        }
+    
+    def detect_anomalies(self, time_series_data):
+        """使用Z-score方法检测生产异常"""
+        z_scores = np.abs(stats.zscore(time_series_data))
+        threshold = 3
+        anomalies = time_series_data[z_scores > threshold]
+        
+        return {
+            'anomaly_indices': np.where(z_scores > threshold)[0].tolist(),
+            'anomaly_values': anomalies.tolist()
+        }
+    
+    def predict_production(self, historical_data):
+        """预测未来24小时产量"""
+        # 特征工程
+        features = ['hour', 'day_of_week', 'shift', 'temperature', 'humidity']
+        X = historical_data[features]
+        y = historical_data['output']
+        
+        # 训练模型
+        model = RandomForestRegressor(n_estimators=100)
+        model.fit(X, y)
+        
+        # 预测未来24小时
+        future_features = self.generate_future_features(24)
+        predictions = model.predict(future_features)
+        
+        return predictions</pre>
+            </div>
+        </div>
+
+        <!-- Slide 11: 测试开发 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>开发流程 5：单元测试与系统测试</h2>
+            </div>
+            
+            <div class="prompt-box">
+                <div class="prompt-title">AI提示词示例 - 单元测试</div>
+                <p>"为上述生产监控系统的API接口编写单元测试：<br>
+                1. 使用Jest框架<br>
+                2. 覆盖正常场景和异常场景<br>
+                3. Mock数据库调用<br>
+                4. 测试覆盖率要求80%以上"</p>
+            </div>
+
+            <h3>AI生成的测试代码示例</h3>
+            <div class="code-example">
+<pre>describe('Production API Tests', () => {
+  let app;
+  let pool;
+
+  beforeEach(() => {
+    pool = {
+      query: jest.fn()
+    };
+    app = createApp(pool);
+  });
+
+  test('GET /api/production/:lineId - 成功获取生产数据', async () => {
+    const mockData = [
+      { line_id: 1, total_output: 150, avg_quality: 95.5 }
+    ];
+    pool.query.mockResolvedValue({ rows: mockData });
+
+    const response = await request(app)
+      .get('/api/production/1')
+      .query({ startDate: '2025-01-01', endDate: '2025-01-02' });
+
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    expect(response.body.data).toEqual(mockData);
+  });
+
+  test('WebSocket连接 - 实时数据推送', (done) => {
+    const ws = new WebSocket('ws://localhost:3001/production');
+    
+    ws.on('message', (data) => {
+      const parsed = JSON.parse(data);
+      expect(parsed).toHaveProperty('timestamp');
+      expect(parsed).toHaveProperty('lines');
+      ws.close();
+      done();
+    });
+  });
+});</pre>
+            </div>
+
+            <div class="prompt-box" style="margin-top: 30px;">
+                <div class="prompt-title">AI提示词示例 - 集成测试</div>
+                <p>"编写端到端测试脚本，模拟完整的用户操作流程：登录->查看监控大屏->查看分析报表->导出数据"</p>
+            </div>
+        </div>
+
+        <!-- Slide 12: 效率提升数据 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>四、效率提升数据分析</h2>
+            </div>
+            
+            <h3>国内外研究数据</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">55.8%</div>
+                    <div class="stat-label">编码速度提升<br><span style="font-size: 12px;">(Microsoft研究, 2023)</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">20-40%</div>
+                    <div class="stat-label">工作量减少<br><span style="font-size: 12px;">(CSDN调查, 2024)</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">27-30%</div>
+                    <div class="stat-label">代码采纳率<br><span style="font-size: 12px;">(GitHub数据, 2024)</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">90%</div>
+                    <div class="stat-label">开发者满意度<br><span style="font-size: 12px;">(Accenture, 2024)</span></div>
+                </div>
+            </div>
+
+            <h3>分层次效率提升</h3>
+            <ul>
+                <li><cite index="21-1"><strong>编码层面：</strong>McKinsey研究显示，开发者完成编码任务速度提升可达2倍</cite></li>
+                <li><cite index="6-4"><strong>测试层面：</strong>中国信通院报告显示，测试阶段效率提升约30%，是提升最明显的环节</cite></li>
+                <li><cite index="16-7"><strong>开发满意度：</strong>90%的开发者表示使用AI工具后工作更有成就感，95%表示编程更有趣</cite></li>
+                <li><cite index="21-10"><strong>任务复杂度影响：</strong>简单任务效率提升明显，但高复杂度任务提升降至10%以下</cite></li>
+            </ul>
+
+            <h3>企业应用效果</h3>
+            <ul>
+                <li><cite index="1-5">美国88%的企业支持使用AI工具，德国为59%</cite></li>
+                <li><cite index="7-5"><strong>腾讯CodeBuddy：</strong>工程级代码生成效率提升40%，复杂任务完成率提升35%</cite></li>
+                <li><cite index="4-2"><strong>科大讯飞iFlyCode：</strong>内部采纳率从30%提升至52%，单元测试覆盖率从30%提升至50%</cite></li>
+            </ul>
+        </div>
+
+        <!-- Slide 13: 具体收益分析 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>具体收益分析</h2>
+            </div>
+            
+            <h3>定量收益</h3>
+            <div style="background: #f0f8ff; padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <p><strong>开发周期缩短：</strong></p>
+                <ul>
+                    <li>需求分析阶段：效率提升10-15%</li>
+                    <li>编码阶段：效率提升20-55%</li>
+                    <li>测试阶段：效率提升30%</li>
+                    <li>文档编写：时间减少50%</li>
+                </ul>
+                <p style="margin-top: 15px;"><strong>整体项目周期预计缩短25-35%</strong></p>
+            </div>
+
+            <h3>定性收益</h3>
+            <ul>
+                <li><strong>代码质量提升：</strong>AI辅助生成的代码在可读性、可维护性方面略优于人工编写</li>
+                <li><strong>知识传承加速：</strong>60-71%的开发者表示AI工具让学习新语言变得容易</li>
+                <li><strong>创新能力释放：</strong>开发者可将更多精力投入复杂问题解决和创新设计</li>
+                <li><strong>团队协作改善：</strong>代码风格更统一，减少代码审查时间</li>
+            </ul>
+
+            <h3>投资回报分析</h3>
+            <p>以100人开发团队为例：</p>
+            <ul>
+                <li>工具成本：约$30/人/月 × 100人 = $3,000/月</li>
+                <li>效率提升价值：假设人均月薪$8,000，提升25% = $200,000/月价值</li>
+                <li><strong>ROI = 66倍</strong></li>
+            </ul>
+        </div>
+
+        <!-- Slide 14: 风险与挑战 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>风险与挑战</h2>
+            </div>
+            
+            <h3>技术风险</h3>
+            <ul>
+                <li><strong>代码安全性：</strong>研究发现5%以上的AI生成代码可能包含安全漏洞</li>
+                <li><strong>代码重复：</strong>2024年重复代码块频率增长8倍，违反DRY原则</li>
+                <li><strong>过度依赖：</strong>开发者可能失去独立解决问题的能力</li>
+            </ul>
+
+            <h3>管理挑战</h3>
+            <ul>
+                <li><strong>知识产权：</strong>AI生成代码的版权归属问题</li>
+                <li><strong>数据安全：</strong>企业代码上传到云端的隐私风险</li>
+                <li><strong>质量控制：</strong>需要加强代码审查和测试流程</li>
+            </ul>
+
+            <h3>应对策略</h3>
+            <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin-top: 20px;">
+                <p>✓ 建立AI工具使用规范和最佳实践</p>
+                <p>✓ 加强代码审查，特别是安全性审查</p>
+                <p>✓ 选择支持私有化部署的工具</p>
+                <p>✓ 持续培训，提升开发者AI协作能力</p>
+                <p>✓ 建立效果评估机制，持续优化使用方式</p>
+            </div>
+        </div>
+
+        <!-- Slide 15: 总结与展望 -->
+        <div class="slide">
+            <div class="slide-header">
+                <h2>五、总结与展望</h2>
+            </div>
+            
+            <h3>核心结论</h3>
+            <ul>
+                <li>AI辅助开发已从概念验证进入产业化阶段</li>
+                <li>效率提升效果明确，ROI显著</li>
+                <li>国内外工具各有优势，需根据场景选择</li>
+                <li>从"代码助手"向"智能协作伙伴"演进</li>
+            </ul>
+
+            <h3>实施建议</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-year">第一阶段</div>
+                    <p>小规模试点，选择1-2个团队，使用免费/试用版本工具</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">第二阶段</div>
+                    <p>扩大应用，制定使用规范，开展系统培训</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-year">第三阶段</div>
+                    <p>全面推广，建立评估体系，持续优化流程</p>
+                </div>
+            </div>
+
+            <h3>未来展望</h3>
+            <ul>
+                <li><cite index="3-2"><strong>市场规模：</strong>全球AI代码工具市场预计2034年达到473亿美元</cite></li>
+                <li><strong>技术演进：</strong>从辅助编码到自主开发，AGI时代即将来临</li>
+                <li><strong>产业变革：</strong>软件开发模式将发生根本性改变</li>
+                <li><strong>人才转型：</strong>开发者角色从编码者转向系统架构师和业务分析师</li>
+            </ul>
+        </div>
+
+        <!-- Slide 16: 谢谢 -->
+        <div class="slide">
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 500px;">
+                <h1 style="font-size: 60px; margin-bottom: 40px;">谢谢聆听</h1>
+                <p style="font-size: 24px; color: #666;">Q & A</p>
+                <div style="margin-top: 80px;">
+                    <p style="font-size: 18px; color: #999;">让我们共同迎接AI赋能的研发新时代</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">上一页</button>
+            <span class="slide-indicator" id="slideIndicator">1 / 16</span>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">下一页</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('slideIndicator').textContent = `${currentSlide + 1} / ${totalSlides}`;
+            
+            // Update button states
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function changeSlide(direction) {
+            showSlide(currentSlide + direction);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' && currentSlide > 0) changeSlide(-1);
+            if (e.key === 'ArrowRight' && currentSlide < totalSlides - 1) changeSlide(1);
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
